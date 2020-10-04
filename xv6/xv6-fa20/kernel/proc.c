@@ -45,6 +45,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -81,6 +82,7 @@ userinit(void)
   p = allocproc();
   acquire(&ptable.lock);
   initproc = p;
+
   if((p->pgdir = setupkvm()) == 0)
     panic("userinit: out of memory?");
   inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
@@ -98,6 +100,10 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+  //RNR - Initialize priority and numOfCycles
+  p->numOfCycles=0;
+  p->priority=0;
+
   release(&ptable.lock);
 }
 
@@ -144,6 +150,10 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
+
+  //RNR - Initialize priority and numOfCycles
+  np->numOfCycles=0;
+  np->priority=np->parent->priority;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;

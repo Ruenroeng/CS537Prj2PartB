@@ -80,8 +80,15 @@ Next Steps:
     - Need to implement a process counter to INCREMENT and CLEAR OUT. This will need to be checked against the prority queue level for a process to determine 
       if it should keep running or if it should yield. If the process completes it's work it will exit() so likely, the status of the 
       process needs to checked in addition to it's time ticks.
+        x Add this to the header file
+        x Initialize this in userinit and fork.
+        * Don't increment if priority of process is 0 since it will keep going ad infinitum.
+    x Bump down the number of processor from the default to one.
+    - Learn how to use gdb (2013 youtube video)
+    - Learn how to use cprintf(2013 youtube video)
     - Build the priority queue table
     - Implement a priority queue for processes to get added to (Maybe this is a struct?)
     - Implement a syscall that sets a processes priority.
     - Implement a syscall that gets a processes priority.
     - Implement a syscall that gets a processes information in the structure described above
+    - Consider developing unit tests.
