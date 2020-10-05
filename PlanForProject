@@ -8,7 +8,8 @@ Notes:
     - A timer tick is essentially a single loop of the for loop in scheduler(). This is set in kernel/timer.c
     - The timeslices are going to be in lookup table. It's round-robin for higher-priority queues to complete before lower-prority queues will complete their work.
     - A process at a lower priority might get started but out-prioritied by a secondary process. 
-    - 
+    - Here is a site that discusses setting up a queue in c: https://rosettacode.org/wiki/Queue/Definition#sys.2Fqueue.h
+    - Here is a site that discusses setting up a priority queue in c: https://www.thecrazyprogrammer.com/2017/06/priority-queue-c-c.html
 
 Important places in the kernel for this project:
     - swtch() -- This is the code that's called that performs the context switch.
@@ -78,16 +79,16 @@ Hints
 
 Next Steps:
     - Need to implement a process counter to INCREMENT and CLEAR OUT. This will need to be checked against the prority queue level for a process to determine 
-      if it should keep running or if it should yield. If the process completes it's work it will exit() so likely, the status of the 
-      process needs to checked in addition to it's time ticks.
+      if it should keep running or if it should yield. If the process completes its work it will exit() so likely, the status of the 
+      process needs to checked in addition to its time ticks.
         x Add this to the header file
         x Initialize this in userinit and fork.
         * Don't increment if priority of process is 0 since it will keep going ad infinitum.
     x Bump down the number of processor from the default to one.
     - Learn how to use gdb (2013 youtube video)
-    - Learn how to use cprintf(2013 youtube video)
-    - Build the priority queue table
-    - Implement a priority queue for processes to get added to (Maybe this is a struct?)
+    x Learn how to use cprintf(2013 youtube video)
+    X Build the priority queue table
+    x Implement a priority queue for processes to get added to (Maybe this is a struct?)
     - Implement a syscall that sets a processes priority.
     - Implement a syscall that gets a processes priority.
     - Implement a syscall that gets a processes information in the structure described above
