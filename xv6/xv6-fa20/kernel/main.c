@@ -4,6 +4,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
+#include "pstat.h"
 
 static void bootothers(void);
 static void mpmain(void);

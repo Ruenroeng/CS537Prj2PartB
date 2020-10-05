@@ -10,6 +10,8 @@
 #define SEG_TSS   6  // this process's task state
 #define NSEGS     7
 
+#include "pstat.h"
+
 // Per-CPU state
 struct cpu {
   uchar id;                    // Local APIC ID; index into cpus[] below
@@ -57,8 +59,6 @@ struct context {
   uint eip;
 };
 
-enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
-
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -77,6 +77,7 @@ struct proc {
 
   int numOfCycles;             // RNR - Added this to track the number of continuous cycles that a process has held the CPU.
   int priority;
+  int statusEntry;
 };
 
 // Process memory is laid out contiguously, low addresses first:

@@ -5,11 +5,25 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "pstat.h"
+
+int addToStatus(struct proc *p);
+void ryanPrintf(int statusEntry);
+
+void initialize(pqueue *pq);
+int empty(pqueue *pq);
+int full(pqueue *pq);
+void enqueue(pqueue *pq, int pid);
+int dequeue(pqueue *pq);
 
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 } ptable;
+
+struct pstat status;
+pqueue pqueueArr[4];
+
 
 static struct proc *initproc;
 
@@ -103,8 +117,42 @@ userinit(void)
   //RNR - Initialize priority and numOfCycles
   p->numOfCycles=0;
   p->priority=0;
+  p->statusEntry = addToStatus(p);
+  for (int i=0; i<4; i++) {
+    initialize(&pqueueArr[i]);
+    }
 
+  ryanPrintf(p->statusEntry);
+  
   release(&ptable.lock);
+}
+
+int addToStatus(struct proc *p) {
+  
+  for (int i=0; i<NPROC; i++) {
+    if (status.inuse[i]==1) {
+      continue;
+    } else {
+      status.inuse[i]=1;
+      status.pid[i]=p->pid;
+      status.priority[i]=p->priority;
+      status.state[i]=p->state;
+      status.ticks[i][p->priority]=0;
+      status.qtail[i][p->priority]=1;
+      return i;
+    }
+  }
+  return -1;
+}
+
+void ryanPrintf(int statusEntry) {
+  cprintf("Status -- EntryNumber:%d\n",statusEntry);
+  cprintf("Status -- InUse:%d\n",status.inuse[statusEntry]);
+  cprintf("Status -- pid:%d\n",status.pid[statusEntry]);
+  cprintf("Status -- priority:%d\n",status.priority[statusEntry]);
+  cprintf("Status -- state:%d\n",status.state[statusEntry]);
+  cprintf("Status -- ticks:%d\n",status.ticks[statusEntry][status.priority[statusEntry]]);
+  cprintf("Status -- qtail:%d\n",status.qtail[statusEntry][status.priority[statusEntry]]);
 }
 
 // Grow current process's memory by n bytes.
@@ -266,7 +314,7 @@ void
 scheduler(void)
 {
   struct proc *p;
-
+  
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -453,4 +501,59 @@ procdump(void)
   }
 }
 
+//QUEUE CODE
+void initialize(pqueue *pq)
+{
+    pq->rear=-1;
+    pq->front=-1;
+}
+ 
+int empty(pqueue *pq)
+{
+    if(pq->rear==-1)
+        return(1);
+ 
+    return(0);
+}
+ 
+void enqueue(pqueue *pq, int pid)
+{
+  int i;
+    if(empty(pq))
+      {
+          pq->rear=pq->front=0;
+          pq->data[0]=pid;
+      }
+      else
+      {
+          i=pq->rear;
 
+          while(pid>pq->data[i])
+          {
+              pq->data[(i+1)%NPROC]=pq->data[i];
+              i=(i-1+NPROC)%NPROC; //anticlockwise movement inside the queue
+              if((i+1)%NPROC==pq->front)
+                  break;
+          }
+
+          //insert pid
+          i=(i+1)%NPROC;
+          pq->data[i]=pid;
+
+          //re-adjust rear
+          pq->rear=(pq->rear+1)%NPROC;
+      }
+}
+ 
+int dequeue(pqueue *pq)
+{
+    int pid; 
+
+        pid=pq->data[pq->front];
+        if(pq->rear==pq->front)   //delete the last element
+            initialize(pq);
+        else
+            pq->front=(pq->front +1)%NPROC;
+ 
+    return(pid);
+}

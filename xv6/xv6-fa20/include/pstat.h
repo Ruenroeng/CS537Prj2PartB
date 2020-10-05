@@ -1,7 +1,7 @@
 #ifndef _PSTAT_H_
 #define _PSTAT_H_
-
 #include "param.h"
+
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
@@ -14,5 +14,10 @@ struct pstat {
   int qtail[NPROC][4]; // total num times moved to tail of queue (e.g., setpri, end of timeslice, waking)
 };
 
+typedef struct pqueue
+{
+    int data[NPROC];
+    int rear,front;
+}pqueue;
+ 
 #endif // _PSTAT_H_
-
