@@ -90,6 +90,21 @@ Next Steps:
     X Build the priority queue table
     x Implement a priority queue for processes to get added to (Maybe this is a struct?)
     - Implement a syscall that sets a processes priority.
+        After syscall sets a processes priority, I need to update the status table.
     - Implement a syscall that gets a processes priority.
     - Implement a syscall that gets a processes information in the structure described above
     - Consider developing unit tests.
+
+
+Questions:
+1) Why has this taken me so long?
+2) Should the syscalls that I implement take in a parameter or should it take in parameters
+
+3) Waiting on the piping -- it feels like the process just hangs forever. If you are using the write end and you didn't close the read end it can cause the process to hang indefinitely. The child should close the read end.
+4) pwd should be implemented by cwd. Does it have to be implemented? pwd is not required to work with redirection.
+5) exit command - are we supposed to allow exit to work with a second argument.
+6) Piping is a variation of redirection. The parents should close files.
+    Piping
+7) Open pipe for parent -- create two children -- one child close the write end -- one child close the read end -- parent close both ends after forking -- dup read end to file 1 -- dup the write end to file 0
+
+

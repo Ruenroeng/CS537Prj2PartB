@@ -1,6 +1,8 @@
 #ifndef _USER_H_
 #define _USER_H_
 
+#include "pstat.h"
+
 struct stat;
 
 // system calls
@@ -25,6 +27,11 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+
+//Ryan added functions
+int setpri(int pid, int pri);
+int getpri(int pid);
+int getpinfo(struct pstat * status);
 
 // user library functions (ulib.c)
 int stat(char*, struct stat*);
